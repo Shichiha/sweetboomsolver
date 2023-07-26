@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Grid Editor - Sweet Boom Solver</title>
+</head>
+
+<body>
+	<h1>Grid Editor</h1>
+	<p>Click on the grid to toggle the state of the cell.</p>
+	<div>
+		<label for="width">Width: </label>
+		<input type="number" id="width" value="10">
+		<label for="height">Height: </label>
+		<input type="number" id="height" value="10">
+		<button onclick="createGrid()">Create Grid</button>
+	</div>
+	<canvas id="grid"></canvas>
+
+	<script>
+		let canvas = document.getElementById("grid");
+		let size = [0, 0];
+		let gridData = [];
+		let gridHTML = "";
+
+		function cycleCell(x, y) {
+			gridData[x][y] = (gridData[x][y] + 1) % 5;
+		}
+
+		function setSize() {
+			size[0] = document.getElementById("width").value;
+			size[1] = document.getElementById("height").value;
+		}
+
+		function createGrid() {
+			setSize();
+			gridData = [];
+			for (let i = 0; i < size[0]; i++) {
+				gridData.push([]);
+				for (let j = 0; j < size[1]; j++) {
+					gridData[i].push(0);
+				}
+			}
+			render()
+
+		}
+
+		function render() {
+			canvas.width = size[0] * 20;
+			canvas.height = size[1] * 20;
+			let ctx = canvas.getContext("2d");
+			let color = (num) => {
+				switch (num) {
+					case 1:
+						return "#00f";
+					case 2:
+						return "#f0f";
+					case 3:
+						return "#f80";
+					case 4:
+						return "#0f0";
+				}
+			}
+
+			function renderCell(x, y) {
+				ctx.fillStyle = color(gridData[x][y]);
+				ctx.fillRect(x * 20, y * 20, 15, 15);
+				ctx.fillStyle = "#000";
+
+			}
+			for (let i = 0; i < size[0]; i++) {
+				for (let j = 0; j < size[1]; j++) {
+					renderCell(i, j);
+				}
+			}
+			console.log(saveAsRowArray(gridData));
+
+
+		}
+
+		function clickOnCanvas(event) {
+			let x = Math.floor(event.offsetX / 20);
+			let y = Math.floor(event.offsetY / 20);
+			cycleCell(x, y);
+			render();
+
+		}
+
+		canvas.addEventListener("click", clickOnCanvas);
+
+
+		function saveAsRowArray() {
+			let result = [];
+			for (let i = 0; i < size[1]; i++) {
+				result.push([]);
+				for (let j = 0; j < size[0]; j++) {
+					result[i].push(gridData[j][i]);
+				}
+			}
+			return result;
+		}
+
+
+	</script>
+
+
+</body>
+
+
+
+</html>
